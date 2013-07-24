@@ -1,0 +1,8 @@
+<li>
+  <a href="#"><%= node.name %></a>
+  <% if node.children.any? %>
+  <ul>
+    <%= render node.children %>
+  </ul>
+  <% end %>
+</li>
