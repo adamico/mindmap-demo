@@ -16,5 +16,7 @@
 //= require jquery.ui.draggable
 //= require raphael-min
 //= require js-mindmap
+//= require arbor
+//= require arbor-template
 //= require main
 //= require_tree .

@@ -16,4 +16,8 @@ class NodesController < ApplicationController
       end
     end
   end
+
+  def arbor
+    @root = Node.roots.first
+  end
 end

@@ -1,12 +1,14 @@
 <h1>Mindmap demo</h1>
 
-<ul>
-  <% Node.roots.each do |root| %>
-  <li>
-    <a href="#"><%= root.name %></a>
-    <ul>
-      <%= render root.children %>
-    </ul>
-  </li>
-  <% end %>
-</ul>
+<div class="mindmap-container">
+  <ul>
+    <% Node.roots.each do |root| %>
+      <li>
+        <a href="#"><%= root.name %></a>
+        <ul>
+          <%= render root.children %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+</div>
