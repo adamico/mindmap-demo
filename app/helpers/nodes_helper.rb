@@ -8,7 +8,11 @@ module NodesHelper
 
   def get_nodes_for(json, node)
     if node.depth < 3
-      json.set! node.name, {}
+      data_hash = {alpha: 1, color: "#b2b19d"}
+      if node.children.any?
+        data_hash[:shape] = "dot"
+      end
+      json.set! node.name, data_hash
       node.children.each do |child|
         get_nodes_for(json, child)
       end
