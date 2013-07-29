@@ -58,28 +58,29 @@ Renderer = function(elt){
     },
 
     openNodesFor: function(newSection){
-        var parent = particleSystem.getEdgesFrom(newSection)[0].source
-        var children = $.map(particleSystem.getEdgesFrom(newSection), function(edge){
-          return edge.target
-        })
+      console.log(particleSystem.getNode(newSection))
+      console.log(particleSystem.getEdgesFrom(newSection))
 
-        particleSystem.eachNode(function(node){
-          //if (node.data.shape=='dot') return // skip all but leafnodes
-          if (node.data.depth <= parent.data.depth ) return // skip all but leafnodes
+      var parent = particleSystem.getEdgesFrom(newSection)[0].source
+      var children = $.map(particleSystem.getEdgesFrom(newSection), function(edge){
+        return edge.target
+      })
 
-          var nowVisible = ($.inArray(node, children)>=0)
-          var newAlpha = (nowVisible) ? 1 : 0
-          var dt = (nowVisible) ? .5 : .5
-          particleSystem.tweenNode(node, dt, {alpha:newAlpha})
+      particleSystem.eachNode(function(node){
+        if (node.data.depth <= parent.data.depth ) return
 
-          if (newAlpha==1){
-            console.log(node)
-            node.p.x = parent.p.x + .05*Math.random() - .025
-            node.p.y = parent.p.y + .05*Math.random() - .025
-            node.tempMass = .001
-          }
-        })
-      },
+        var nowVisible = ($.inArray(node, children)>=0)
+        var newAlpha = (nowVisible) ? 1 : 0
+        var dt = (nowVisible) ? .5 : .5
+        particleSystem.tweenNode(node, dt, {alpha:newAlpha})
+
+        if (newAlpha==1){
+          node.p.x = parent.p.x + .05*Math.random() - .025
+          node.p.y = parent.p.y + .05*Math.random() - .025
+          node.tempMass = .001
+        }
+      })
+    },
 
     initMouseHandling:function(){
       // no-nonsense drag and drop (thanks springy.js)
@@ -124,7 +125,6 @@ Renderer = function(elt){
           if (nearest)
             {
               if (nearest.node.data.shape == 'dot'){
-                console.log(nearest);
                 _father = nearest.node.name;
                 if (nearest.node.data.depth > 0) that.openNodesFor(_father)
               }

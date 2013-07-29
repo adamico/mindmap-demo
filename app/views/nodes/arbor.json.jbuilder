@@ -2,7 +2,10 @@
   #json.extract! node, :name
 #end
 json.edges do
-  build_tree_for(json, @root)
+  edges_for json, @root
+  @root.children.each do |node|
+    edges_for(json, node)
+  end
 end
 
 json.nodes do
