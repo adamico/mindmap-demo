@@ -17,6 +17,8 @@
 //= require raphael-min
 //= require js-mindmap
 //= require arbor
+//= require arbor-tween
+//= require arbor-graphics
 //= require arbor-template
 //= require main
 //= require_tree .
