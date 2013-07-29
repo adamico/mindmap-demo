@@ -43,32 +43,29 @@ Renderer = function(elt){
 
       particleSystem.eachNode(function(node, pt){
         var w = Math.max(20, 20 + gfx.textWidth(node.name))
-        var label = node.data.label
         if (node.data.alpha === 0) return
-        if (node.data.depth <= 1)
+        if (node.data.shape == 'dot')
         {
-          if (node.data.shape == 'dot')
-          {
-            gfx.oval(pt.x - w/2, pt.y - w/2, w, w, {fill: node.data.color, alpha: node.data.alpha})
-            gfx.text(node.name, pt.x, pt.y + 7, {color: "white", align: "center", font: "Arial", size: 12})
-          }
-          else
-          {
-            gfx.rect(pt.x-w/2, pt.y-8, w, 20, 4, {fill:node.data.color, alpha:node.data.alpha})
-            gfx.text(node.name, pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:12})
-          }
+          gfx.oval(pt.x - w/2, pt.y - w/2, w, w, {fill: node.data.color, alpha: node.data.alpha})
+          gfx.text(node.name, pt.x, pt.y + 7, {color: "white", align: "center", font: "Arial", size: 12})
+        }
+        else
+        {
+          gfx.rect(pt.x-w/2, pt.y-8, w, 20, 4, {fill:node.data.color, alpha:node.data.alpha})
+          gfx.text(node.name, pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:12})
         }
       })
     },
 
-    switchSection:function(newSection){
+    openNodesFor: function(newSection){
         var parent = particleSystem.getEdgesFrom(newSection)[0].source
         var children = $.map(particleSystem.getEdgesFrom(newSection), function(edge){
           return edge.target
         })
 
         particleSystem.eachNode(function(node){
-          if (node.data.shape=='dot') return // skip all but leafnodes
+          //if (node.data.shape=='dot') return // skip all but leafnodes
+          if (node.data.depth <= parent.data.depth ) return // skip all but leafnodes
 
           var nowVisible = ($.inArray(node, children)>=0)
           var newAlpha = (nowVisible) ? 1 : 0
@@ -76,6 +73,7 @@ Renderer = function(elt){
           particleSystem.tweenNode(node, dt, {alpha:newAlpha})
 
           if (newAlpha==1){
+            console.log(node)
             node.p.x = parent.p.x + .05*Math.random() - .025
             node.p.y = parent.p.y + .05*Math.random() - .025
             node.tempMass = .001
@@ -120,12 +118,16 @@ Renderer = function(elt){
         //},
         clicked:function(e){
           var pos = $(canvas).offset();
-          _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
+          _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top);
           nearest = dragged = particleSystem.nearest(_mouseP);
-          console.log(nearest)
 
-          if (nearest && selected && nearest.node === selected.node)
+          if (nearest)
             {
+              if (nearest.node.data.shape == 'dot'){
+                console.log(nearest);
+                _father = nearest.node.name;
+                if (nearest.node.data.depth > 0) that.openNodesFor(_father)
+              }
               //var link = selected.node.data.link
               //if (link.match(/^#/))
                 //{
