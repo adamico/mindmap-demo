@@ -32,8 +32,8 @@ $ ->
   Nodes()
 
 Nodes = ->
-  sys = arbor.ParticleSystem(1000, 600, 0.5) # create the system with sensible repulsion/stiffness/friction
-  sys.parameters({gravity:true}) # use center-gravity to make the graph settle nicely (ymmv)
+  sys = arbor.ParticleSystem() # create the system with sensible repulsion/stiffness/friction
+  sys.parameters({stiffness:900, repulsion:2000, gravity:true, dt:0.015})
   sys.renderer = Renderer("#viewport") # our newly created renderer will have its .init() method called shortly by sys...
 
   that =
