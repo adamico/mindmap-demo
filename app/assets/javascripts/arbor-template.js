@@ -11,22 +11,20 @@ Renderer = function(elt){
 
   var that = {
     init:function(system){
-      //
-      // the particle system will call the init function once, right before the
-      // first frame is to be drawn. it's a good place to set up the canvas and
-      // to pass the canvas size to the particle system
-      //
-      // save a reference to the particle system for use in the .redraw() loop
       particleSystem = system
+      particleSystem.screen({size:{width:dom.width(), height:dom.height()},
+                    padding:[36,60,36,60]})
 
-      // inform the system of the screen dimensions so it can map coords for us.
-      // if the canvas is ever resized, screenSize should be called again with
-      // the new dimensions
-      particleSystem.screenSize(canvas.width, canvas.height) 
-      particleSystem.screenPadding(80) // leave an extra 80px of whitespace per side
-
-      // set up some event handlers to allow for node-dragging
+      $(window).resize(that.resize)
+      that.resize()
       that.initMouseHandling()
+    },
+
+    resize:function(){
+      canvas.width = $(window).width()
+      canvas.height = .75* $(window).height()
+      particleSystem.screen({size:{width:canvas.width, height:canvas.height}})
+      that.redraw()
     },
 
     redraw:function(){
@@ -36,22 +34,29 @@ Renderer = function(elt){
 
       particleSystem.eachEdge(function(edge, pt1, pt2){
         if (edge.source.data.alpha * edge.target.data.alpha == 0) return
-        gfx.line(pt1, pt2, {stroke: "#b2b19d", width: 2, alpha: edge.target.data.alpha})
+        gfx.line(pt1, pt2, {
+          stroke: "#b2b19d",
+          width: 2,
+          alpha: edge.target.data.alpha
+        })
       })
 
       particleSystem.eachNode(function(node, pt){
         var w = Math.max(20, 20 + gfx.textWidth(node.name))
         var label = node.data.label
         if (node.data.alpha === 0) return
-        if (node.data.shape == 'dot')
+        if (node.data.depth <= 1)
         {
-          gfx.oval(pt.x - w/2, pt.y - w/2, w, w, {fill: node.data.color, alpha: node.data.alpha})
-          gfx.text(node.name, pt.x, pt.y + 7, {color: "white", align: "center", font: "Arial", size: 12})
-        }
-        else
-        {
-          gfx.rect(pt.x-w/2, pt.y-8, w, 20, 4, {fill:node.data.color, alpha:node.data.alpha})
-          gfx.text(node.name, pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:12})
+          if (node.data.shape == 'dot')
+          {
+            gfx.oval(pt.x - w/2, pt.y - w/2, w, w, {fill: node.data.color, alpha: node.data.alpha})
+            gfx.text(node.name, pt.x, pt.y + 7, {color: "white", align: "center", font: "Arial", size: 12})
+          }
+          else
+          {
+            gfx.rect(pt.x-w/2, pt.y-8, w, 20, 4, {fill:node.data.color, alpha:node.data.alpha})
+            gfx.text(node.name, pt.x, pt.y+9, {color:"white", align:"center", font:"Arial", size:12})
+          }
         }
       })
     },

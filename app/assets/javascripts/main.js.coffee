@@ -44,7 +44,7 @@ Nodes = ->
         nodes = data.nodes
         $.each nodes, (name, info) ->
           info.label = name
-        sys.merge({nodes: nodes, edges: data.edges})
+        sys.graft({nodes: nodes, edges: data.edges})
   return that.init()
 
   # add some nodes to the graph and watch it go...
